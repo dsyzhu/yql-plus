@@ -1,0 +1,129 @@
+diff --git a/pom.xml b/pom.xml
+index 5dbe4fa..3989cb3 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -18,8 +18,10 @@
+     <description>yqlplus_engine_project</description>
+     <properties>
+         <yqlplus.version>2.0.0-SNAPSHOT</yqlplus.version>
+-        <additionalparam>-Xdoclint:none</additionalparam>
++        <additionalparam>-Xdoclint:none --add-modules com.google.common.base</additionalparam>
+         <min_jdk_version>1.10</min_jdk_version>
++        <junit.jupiter.version>5.2.0</junit.jupiter.version>
++        <junit.platform.version>1.2.0</junit.platform.version>
+     </properties>
+     <modules>
+         <module>yqlplus_language</module>
+@@ -30,10 +32,28 @@
+     </modules>
+     <dependencyManagement>
+         <dependencies>
++            <dependency>
++                <groupId>org.junit.jupiter</groupId>
++                <artifactId>junit-jupiter-api</artifactId>
++                <version>${junit.jupiter.version}</version>
++                <scope>test</scope>
++            </dependency>
++            <dependency>
++                <groupId>org.junit.jupiter</groupId>
++                <artifactId>junit-jupiter-params</artifactId>
++                <version>${junit.jupiter.version}</version>
++                <scope>test</scope>
++            </dependency>
++            <dependency>
++                <groupId>org.junit.jupiter</groupId>
++                <artifactId>junit-jupiter-engine</artifactId>
++                <version>${junit.jupiter.version}</version>
++                <scope>test</scope>
++            </dependency>
+             <dependency>
+                 <groupId>org.testng</groupId>
+                 <artifactId>testng</artifactId>
+-                <version>6.8.5</version>
++                <version>6.14.3</version>
+                 <scope>test</scope>
+                 <exclusions>
+                     <exclusion>
+@@ -65,7 +85,7 @@
+             <dependency>
+                 <groupId>com.google.code.findbugs</groupId>
+                 <artifactId>jsr305</artifactId>
+-                <version>2.0.1</version>
++                <version>3.0.2</version>
+             </dependency>
+         </dependencies>
+     </dependencyManagement>
+@@ -86,9 +106,20 @@
+                     <artifactId>maven-compiler-plugin</artifactId>
+                     <version>3.7.0</version>
+                     <configuration>
+-                        <source>1.9</source>
+-                        <target>1.9</target>
++                        <source>1.10</source>
++                        <target>1.10</target>
++                        <!--<compilerArgs>-->
++                            <!--<arg>&#45;&#45;add-modules</arg>-->
++                            <!--<arg>java.xml.ws.annotation</arg>-->
++                        <!--</compilerArgs>-->
+                     </configuration>
++                    <dependencies>
++                        <dependency>
++                            <groupId>org.ow2.asm</groupId>
++                            <artifactId>asm</artifactId>
++                            <version>6.2</version>
++                        </dependency>
++                    </dependencies>
+                 </plugin>
+                 <plugin>
+                     <groupId>org.apache.maven.plugins</groupId>
+@@ -103,11 +134,11 @@
+                         </execution>
+                     </executions>
+                 </plugin>
+-                <plugin>
+-                    <groupId>org.apache.maven.plugins</groupId>
+-                    <artifactId>maven-surefire-plugin</artifactId>
+-                    <version>2.20.1</version>
+-                </plugin>
++                <!--<plugin>-->
++                    <!--<groupId>org.apache.maven.plugins</groupId>-->
++                    <!--<artifactId>maven-surefire-plugin</artifactId>-->
++                    <!--<version>2.21.0</version>-->
++                <!--</plugin>-->
+                 <plugin>
+                     <groupId>org.codehaus.mojo</groupId>
+                     <artifactId>findbugs-maven-plugin</artifactId>
+diff --git a/yqlplus_language/pom.xml b/yqlplus_language/pom.xml
+index d12dcc1..5b6f4c4 100644
+--- a/yqlplus_language/pom.xml
++++ b/yqlplus_language/pom.xml
+@@ -60,6 +60,11 @@
+             <artifactId>jackson-databind</artifactId>
+             <optional>true</optional>
+         </dependency>
++        <!--<dependency>-->
++            <!--<groupId>javax.annotation</groupId>-->
++            <!--<artifactId>javax.annotation-api</artifactId>-->
++            <!--<version>1.3.2</version>-->
++        <!--</dependency>-->
+     </dependencies>
+     <build>
+         <finalName>yqlplus_language</finalName>
+diff --git a/yqlplus_language/src/main/java/module-info.java b/yqlplus_language/src/main/java/module-info.java
+index 8788083..392eb74 100644
+--- a/yqlplus_language/src/main/java/module-info.java
++++ b/yqlplus_language/src/main/java/module-info.java
+@@ -1,6 +1,11 @@
+ module com.yahoo.yqlplus.language {
++    requires jsr305;
++    requires antlr4.runtime;
++    requires com.google.common;
++    requires com.google.guice;
++    requires com.fasterxml.jackson.core;
++    requires com.fasterxml.jackson.databind;
+     exports com.yahoo.yqlplus.language.logical;
+     exports com.yahoo.yqlplus.language.operator;
+     exports com.yahoo.yqlplus.language.parser;
+-    requires antlr4.runtime;
+ }
+\ No newline at end of file
